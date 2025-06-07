@@ -1,26 +1,20 @@
-# Use official Python image
 FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libzbar0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libgl1 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
+# Copy requirements and install
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app source code
+# Copy app code
 COPY . .
 
-# Expose port (for Render, this is ignored but still good practice)
+# Expose port and start
 EXPOSE 8000
-
-# Make start script executable
-RUN chmod +x start.sh
-
-# Start script will decide dev or prod mode
-CMD ["./start.sh"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
