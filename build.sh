@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "ENV is set to: $ENV"
+apt-get update && apt-get install -y libzbar0
 
 # Switch between development and production mode
 if [ "$ENV" = "dev" ]; then
