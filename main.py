@@ -1,10 +1,7 @@
 from typing import Union
-
 from fastapi import FastAPI
-
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
-
 from mangum import Mangum
 
 
@@ -32,8 +29,7 @@ async def main_home():
     return {"message": "Welcome to our SMART Checker API"}
 
 
-
-# Include our API routes
+# Include API routes
 app.include_router(checker_router.router, prefix="/api")
 
 
