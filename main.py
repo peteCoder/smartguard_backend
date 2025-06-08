@@ -12,7 +12,8 @@ from routers import checker_router
 app = FastAPI(
     title="Domain Checker API",
     description="Backend service for domain checking and QR scanning",
-    version="1.0.0"
+    version="1.0.0",
+    debug=settings.DEBUG,
 )
 
 # CORS Middleware
