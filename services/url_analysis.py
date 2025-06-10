@@ -1,15 +1,120 @@
+import re
+import socket
+from urllib.parse import urlparse
+import whois
+from datetime import datetime, timezone
+import tldextract
 
-def analyze_url(domain: str):
-    # For now we just fake check
-    return {
-        "domain": domain,
-        "available": True,
-        "safe": True,
-        "whois": {
-            "registrar": "Fake Registrar Inc.",
-            "creation_date": "2020-01-01",
-            "expiry_date": "2025-01-01"
+# Detect IP-based URLs
+def is_ip_address(domain: str) -> bool:
+    try:
+        socket.inet_aton(domain)
+        return True
+    except socket.error:
+        return False
+
+# Check for HTTPS
+def has_https(domain: str) -> bool:
+    return domain.startswith("https://")
+
+# Check for known shorteners
+def is_shortened(domain: str) -> bool:
+    shorteners = [
+        "bit.ly", 
+        "tinyurl.com", 
+        "t.co", 
+        "goo.gl", 
+        "is.gd", 
+        "buff.ly",
+    ]
+    for s in shorteners:
+        if s in domain:
+            return True
+    return False
+
+# Basic typosquatting score (placeholder logic)
+def typosquatting_score(domain: str) -> float:
+    suspicious_keywords = ["login", "verify", "secure", "account"]
+    score = sum([1 for word in suspicious_keywords if word in domain.lower()])
+    return min(score / len(suspicious_keywords), 1.0)
+
+# WHOIS lookup & domain age
+def get_whois_info(domain: str):
+    try:
+        w = whois.whois(domain)
+
+        creation = w.creation_date
+        expiry = w.expiration_date
+
+        # Handle list cases
+        if isinstance(creation, list): creation = creation[0]
+        if isinstance(expiry, list): expiry = expiry[0]
+
+        # Fix timezone mismatch
+        if creation and creation.tzinfo is None:
+            creation = creation.replace(tzinfo=timezone.utc)
+        if expiry and expiry.tzinfo is None:
+            expiry = expiry.replace(tzinfo=timezone.utc)
+
+        age_days = (datetime.now(timezone.utc) - creation).days if creation else None
+
+        return {
+            "domain_name": w.domain_name,
+            "registrar": w.registrar,
+            "name_servers": w.name_servers,
+            "status": w.status,
+            "emails": w.emails,
+            "owner": w.name,
+            "organization": w.org,
+            "creation_date": str(creation),
+            "expiry_date": str(expiry),
+            "age_days": age_days
         }
+
+    except Exception as e:
+        return {
+            "domain_name": None,
+            "registrar": None,
+            "name_servers": None,
+            "status": None,
+            "emails": None,
+            "owner": None,
+            "organization": None,
+            "creation_date": None,
+            "expiry_date": None,
+            "age_days": None,
+            "error": str(e)
+        }
+
+
+# 🔍 Main analysis
+def analyze_url(url: str):
+    parsed = urlparse(url)
+    hostname = parsed.netloc or parsed.path  # handle urls like "example.com"
+    ext = tldextract.extract(hostname)
+    domain_name = f"{ext.domain}.{ext.suffix}"
+
+    whois_info = get_whois_info(domain_name)
+
+    age_days = whois_info.get("age_days")
+    typo_score = typosquatting_score(domain_name)
+
+    result = {
+        "domain": domain_name,
+        "is_ip": is_ip_address(hostname),
+        "has_https": has_https(url),
+        "is_shortened": is_shortened(url),
+        "tld": ext.suffix,
+        "typosquatting_score": typosquatting_score(domain_name),
+        "domain_age_days": whois_info.get("age_days"),
+        "safe": (age_days is not None and age_days > 180 and typo_score < 0.5),
+        "whois": whois_info,
     }
+
+    return result
+
+
+
+
 
 

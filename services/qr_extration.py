@@ -2,11 +2,11 @@ from PIL import Image
 import io
 from pyzbar.pyzbar import decode
 from fastapi import UploadFile
-
 from typing import Optional
 from fastapi import UploadFile
 import cv2
 import numpy as np
+
 
 async def extract_qr_from_file(file: UploadFile):
     image_data = await file.read()

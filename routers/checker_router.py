@@ -4,11 +4,9 @@ from models import report_model
 
 router = APIRouter()
 
-
 @router.get("/")
 async def api_home():
     return {"message": "API is working"}
-
 
 @router.post("/scan-qr")
 async def scan_qr(file: UploadFile = File(...)):
