@@ -4,6 +4,10 @@ from urllib.parse import urlparse
 import whois
 from datetime import datetime, timezone
 import tldextract
+from utils.safe_browsing import (
+    check_url_safety_google, 
+    scan_url_with_urlscan
+)
 
 # Detect IP-based URLs
 def is_ip_address(domain: str) -> bool:
@@ -27,16 +31,13 @@ def is_shortened(domain: str) -> bool:
         "is.gd", 
         "buff.ly",
     ]
-    for s in shorteners:
-        if s in domain:
-            return True
-    return False
+    return any(s in domain for s in shorteners)
 
 # Basic typosquatting score (placeholder logic)
 def typosquatting_score(domain: str) -> float:
     suspicious_keywords = ["login", "verify", "secure", "account"]
     score = sum([1 for word in suspicious_keywords if word in domain.lower()])
-    return min(score / len(suspicious_keywords), 1.0)
+    return round(min(score / len(suspicious_keywords), 1.0), 2)
 
 # WHOIS lookup & domain age
 def get_whois_info(domain: str):
@@ -66,12 +67,13 @@ def get_whois_info(domain: str):
             "emails": w.emails,
             "owner": w.name,
             "organization": w.org,
-            "creation_date": str(creation),
-            "expiry_date": str(expiry),
+            "creation_date": str(creation) if creation else None,
+            "expiry_date": str(expiry) if expiry else None,
             "age_days": age_days
         }
 
     except Exception as e:
+        print(e)
         return {
             "domain_name": None,
             "registrar": None,
@@ -87,7 +89,7 @@ def get_whois_info(domain: str):
         }
 
 
-# 🔍 Main analysis
+# Main analysis
 def analyze_url(url: str):
     parsed = urlparse(url)
     hostname = parsed.netloc or parsed.path  # handle urls like "example.com"
@@ -99,17 +101,30 @@ def analyze_url(url: str):
     age_days = whois_info.get("age_days")
     typo_score = typosquatting_score(domain_name)
 
+    is_safe = (
+        age_days is not None and 
+        age_days > 180 and 
+        typo_score < 0.5
+    )
+
     result = {
         "domain": domain_name,
         "is_ip": is_ip_address(hostname),
         "has_https": has_https(url),
         "is_shortened": is_shortened(url),
         "tld": ext.suffix,
-        "typosquatting_score": typosquatting_score(domain_name),
-        "domain_age_days": whois_info.get("age_days"),
-        "safe": (age_days is not None and age_days > 180 and typo_score < 0.5),
+        "typosquatting_score": typo_score,
+        "domain_age_days": age_days,
+        "safe": is_safe,
         "whois": whois_info,
     }
+
+    google_check = check_url_safety_google(url)
+    urlscan_check = scan_url_with_urlscan(url)
+
+
+    result["external_urlscan_check"] = urlscan_check
+    result["external_google_safe_check"] = google_check
 
     return result
 
