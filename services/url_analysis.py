@@ -123,8 +123,10 @@ def analyze_url(url: str):
     urlscan_check = scan_url_with_urlscan(url)
 
 
-    result["external_urlscan_check"] = urlscan_check
+    # result["external_urlscan_check"] = urlscan_check
     result["external_google_safe_check"] = google_check
+
+
 
     return result
 

@@ -36,3 +36,6 @@ app.include_router(checker_router.router, prefix="/api")
 
 
 handler = Mangum(app)
+
+
+
