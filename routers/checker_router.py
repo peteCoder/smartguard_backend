@@ -26,7 +26,8 @@ async def extract_qr(file: UploadFile = File(...)):
     
 
 
-@router.get("/check-domain", response_model=report_model.DomainAnalysis)
+# @router.get("/check-domain", response_model=report_model.DomainAnalysis)
+@router.get("/check-domain")
 def check_domain(domain: str = Query(..., example="https://example.com")):
     analysis_result = url_analysis.analyze_url(domain)
     return analysis_result
