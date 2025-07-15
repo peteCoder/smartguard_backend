@@ -3,7 +3,15 @@ from pydantic import Field
 from typing import List
 from pydantic import Field, field_validator
 from typing import Union
+import os
+from jinja2 import Environment, FileSystemLoader
 
+
+# ✅ Set up Jinja2 template environment
+templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+env = Environment(loader=FileSystemLoader(templates_dir))
+
+print("Template dir: ", templates_dir)
 
 class Settings(BaseSettings):
     # External API keys

@@ -3,7 +3,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from mangum import Mangum
+import os
 
+
+# os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
 app = FastAPI()
 

@@ -92,7 +92,8 @@ def get_whois_info(domain: str):
 # Main analysis
 def analyze_url(url: str):
     parsed = urlparse(url)
-    hostname = parsed.netloc or parsed.path  # handle urls like "example.com"
+    hostname = parsed.netloc or parsed.path  
+    # handle urls like "example.com"
     ext = tldextract.extract(hostname)
     domain_name = f"{ext.domain}.{ext.suffix}"
 

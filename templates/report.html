@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>SmartGuard Domain Report</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            margin: 40px;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        h1,
+        h2 {
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 6px;
+            background: #fefefe;
+            border: 1px solid #ddd;
+            page-break-inside: avoid;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .label {
+            flex: 0 0 180px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .value {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        ul {
+            margin: 5px 0 0 20px;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 4px;
+            page-break-inside: avoid;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            margin-top: 60px;
+            color: #999;
+            page-break-before: always;
+        }
+
+        a {
+            color: #0066cc;
+            word-break: break-word;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">SmartGuard Domain Analysis Report</h1>
+
+    <div class="section">
+        <h2>Domain Overview</h2>
+        <div class="row">
+            <div class="label">Domain:</div>
+            <div class="value">{{ domain }}</div>
+        </div>
+        <div class="row">
+            <div class="label">TLD:</div>
+            <div class="value">{{ tld or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Is IP:</div>
+            <div class="value">{{ "Yes" if is_ip else "No" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">HTTPS:</div>
+            <div class="value">{{ "Yes" if has_https else "No" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Shortened:</div>
+            <div class="value">{{ "Yes" if is_shortened else "No" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Typosquatting Score:</div>
+            <div class="value">{{ typosquatting_score or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Domain Age (days):</div>
+            <div class="value">{{ domain_age_days or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Safe (ML Heuristic):</div>
+            <div class="value">{{ "Yes" if safe else "No" }}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>WHOIS Information</h2>
+        <div class="row">
+            <div class="label">Domain Name:</div>
+            <div class="value">{{ whois.domain_name or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Registrar:</div>
+            <div class="value">{{ whois.registrar or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Owner:</div>
+            <div class="value">{{ whois.owner or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Organization:</div>
+            <div class="value">{{ whois.organization or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Creation Date:</div>
+            <div class="value">{{ whois.creation_date or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Expiry Date:</div>
+            <div class="value">{{ whois.expiry_date or "N/A" }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Name Servers:</div>
+            <div class="value">
+                {% if whois.name_servers %}
+                <ul>{% for ns in whois.name_servers %}<li>{{ ns }}</li>{% endfor %}</ul>
+                {% else %}N/A{% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="label">Status:</div>
+            <div class="value">
+                {% if whois.status %}
+                {% if whois.status is string %}
+                <div>{{ whois.status }}</div>
+                {% elif whois.status is iterable %}
+                <ul>{% for s in whois.status %}<li>{{ s }}</li>{% endfor %}</ul>
+                {% else %}
+                <div>{{ whois.status }}</div>
+                {% endif %}
+                {% else %}
+                <div>N/A</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="label">Emails:</div>
+            <div class="value">
+                {% if whois.emails %}
+                <ul>{% for email in whois.emails %}<li>{{ email }}</li>{% endfor %}</ul>
+                {% else %}N/A{% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="label">WHOIS Error:</div>
+            <div class="value">{{ whois.error or "None" }}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Google Safe Browsing</h2>
+        <div class="row">
+            <div class="label">Safe:</div>
+            <div class="value">{{ "Yes" if external_google_safe_check.safe else "No" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Details:</div>
+            <div class="value">
+                {% if external_google_safe_check.details %}
+                <ul>{% for detail in external_google_safe_check.details %}<li>{{ detail }}</li>{% endfor %}</ul>
+                {% else %}None{% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="label">Error:</div>
+            <div class="value">{{ external_google_safe_check.error or "None" }}</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>URLScan.io Results</h2>
+        <div class="row">
+            <div class="label">Verdict:</div>
+            <div class="value">{{ external_urlscan_check.verdict or "N/A" }}</div>
+        </div>
+        <div class="row">
+            <div class="label">Score:</div>
+            <div class="value">{{ external_urlscan_check.score or "N/A" }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">Tags:</div>
+            <div class="value">
+                {% if external_urlscan_check.tags %}
+                <ul>{% for tag in external_urlscan_check.tags %}<li>{{ tag }}</li>{% endfor %}</ul>
+                {% else %}None{% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="label">Screenshot:</div>
+            <div class="value">
+                {% if external_urlscan_check.screenshot %}
+                <a href="{{ external_urlscan_check.screenshot }}">{{ external_urlscan_check.screenshot }}</a>
+                {% else %}N/A{% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="label">Error:</div>
+            <div class="value">{{ external_urlscan_check.error or "None" }}</div>
+        </div>
+    </div>
+
+    <p class="footer">Generated by SmartGuard on {{ date }}</p>
+</body>
+
+</html>
