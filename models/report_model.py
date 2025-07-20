@@ -1,20 +1,30 @@
 from pydantic import BaseModel
-from typing import Optional, List, Union, Any, Dict
-
+from typing import Optional, List, Union, Any, Dict, Literal
 
 class WhoisInfo(BaseModel):
     domain_name: Optional[str]
     registrar: Optional[str]
-    name_servers: Optional[Union[str, List[str]]]
-    status: Optional[Union[str, List[str]]]
-    emails: Optional[Union[str, List[str]]]
+    name_servers: Optional[List[str]]
+    status: Optional[Union[List[str], str]]
+    emails: Optional[Union[List[str], str]]
     owner: Optional[str]
     organization: Optional[str]
     creation_date: Optional[str]
     expiry_date: Optional[str]
     age_days: Optional[int]
-    error: Optional[str] = None
+    error: Optional[str]
 
+class PhishingPredictionResponse(BaseModel):
+    domain: str
+    tld: str
+    is_phishing: bool
+    confidence: float
+    features_used: Dict[str, Union[str, int, float]]
+    whois: WhoisInfo
+    deceptive_pattern_detected: Optional[bool]
+    warning: Optional[str]
+    risk_score: Optional[float]
+    risk_level: Optional[str]
 
 class QRScanResult(BaseModel):
     extracted_text: str
@@ -47,6 +57,14 @@ class DomainAnalysis(BaseModel):
     external_google_safe_check: ExternalCheckResult
     external_urlscan_check: URLScanCheckResult
 
+class DomainPredictFeatures(BaseModel):
+    has_https: bool
+    is_shortened: bool
+    typosquatting_score: float
+    domain_age_days: int
+    tld: str
+    domain_length: int
+
 
 class InvalidExtractedError:
     extracted_text: str
@@ -59,7 +77,7 @@ class URLClassificationRequest(BaseModel):
 
 class URLClassificationResponse(BaseModel):
     url: str
-    label: str  # e.g., "phishing" or "benign"
+    label: str
     probability: float
 
 

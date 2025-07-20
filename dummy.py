@@ -1,3 +1,4 @@
+from config import settings
 
 # import uvicorn
 # from fastapi import FastAPI, Query, Body, Header, Cookie, Form, File, UploadFile
@@ -162,7 +163,7 @@
 # except requests.RequestException as e:
 #     print(f"Failed to download: {e}")
 
-
+import numpy as np
 import pandas as pd
 import tldextract
 import whois
@@ -173,12 +174,13 @@ from datetime import datetime
 # -------------------------------
 
 INPUT_FILE = 'DataDomainCSVProto.csv'  # change to your file name
-OUTPUT_FILE = 'DomainDataWithOtherFeaturesStuffPerfect.csv'
+OUTPUT_FILE = 'DomainAccurateDataCSVType.csv'
 
 # -------------------------------
 # FEATURE FUNCTIONS
 # -------------------------------
- 
+
+
 def domain_length(domain):
     return len(domain)
 
@@ -207,28 +209,66 @@ SUSPICIOUS_TLDS = {'tk', 'ml', 'ga', 'cf', 'gq'}  # add more if needed
 def is_suspicious_tld(tld):
     return 1 if tld in SUSPICIOUS_TLDS else 0
 
-from datetime import datetime
-import requests
-# https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey=at_cnIlEktXg4X0agmHvSrYhXi8lZY1k&domainName=google.com
+def typosquatting_score(domain: str) -> float:
+    suspicious_keywords = ["login", "verify", "secure", "account"]
+    score = sum([1 for word in suspicious_keywords if word in domain.lower()])
+    return round(min(score / len(suspicious_keywords), 1.0), 2)
 
-def get_domain_age_days(domain):
-    api_key = "at_cnIlEktXg4X0agmHvSrYhXi8lZY1k"
-    url = "https://www.whoisxmlapi.com/whoisserver/WhoisService"
-    params = {
-        "apiKey": api_key,
-        "domainName": domain,
-        "outputFormat": "JSON"
-    }
-    try:
-        response = requests.get(url, params=params, timeout=10)
-        data = response.json()
-        created_date = data['WhoisRecord']['createdDate']
-        created_dt = datetime.strptime(created_date, "%Y-%m-%dT%H:%M:%SZ")
-        age_days = (datetime.now() - created_dt).days
-        return age_days
-    except Exception as e:
-        print(f"WHOIS failed for {domain}: {e}")
-        return None
+from datetime import datetime, timezone
+import requests
+
+
+# Generate age based on is_phishing label
+def generate_age(is_phishing):
+    if is_phishing == 1:
+        return np.random.randint(1, 180)  # phishing domains are often new
+    else:
+        return np.random.randint(1000, 5000)  # safe domains are older
+
+
+# def get_domain_age_days(domain) -> int:
+#     try:
+#         w = whois.whois(domain)
+
+#         creation = w.creation_date
+#         expiry = w.expiration_date
+
+#         # Handle list cases
+#         if isinstance(creation, list): creation = creation[0]
+#         if isinstance(expiry, list): expiry = expiry[0]
+
+#         # Fix timezone mismatch
+#         if creation and creation.tzinfo is None:
+#             creation = creation.replace(tzinfo=timezone.utc)
+#         if expiry and expiry.tzinfo is None:
+#             expiry = expiry.replace(tzinfo=timezone.utc)
+
+#         age_days = (datetime.now(timezone.utc) - creation).days if creation else None
+
+#         return age_days
+#     except Exception as e:
+#         print(e)
+#         return 0
+
+
+# def get_domain_age_days(domain):
+#     api_key = settings.WHOIS_API_KEY
+#     url = "https://www.whoisxmlapi.com/whoisserver/WhoisService"
+#     params = {
+#         "apiKey": api_key,
+#         "domainName": domain,
+#         "outputFormat": "JSON"
+#     }
+#     try:
+#         response = requests.get(url, params=params, timeout=10)
+#         data = response.json()
+#         created_date = data['WhoisRecord']['createdDate']
+#         created_dt = datetime.strptime(created_date, "%Y-%m-%dT%H:%M:%SZ")
+#         age_days = (datetime.now() - created_dt).days
+#         return age_days
+#     except Exception as e:
+#         print(f"WHOIS failed for {domain}: {e}")
+#         return None
 
 
 # def get_domain_age_days(domain):
@@ -285,8 +325,9 @@ def main():
     df['num_subdomains'] = df['domain'].apply(num_subdomains)
     df['tld'] = df['domain'].apply(get_tld)
     df['is_suspicious_tld'] = df['tld'].apply(is_suspicious_tld)
-    df['domain_age_days'] = df['domain'].apply(get_domain_age_days)
-    
+    # df['domain_age_days'] = df['domain'].apply(get_domain_age_days)
+    # df["domain_age_days"] = df["is_phishing"].apply(generate_age)
+    df["typosquatting_score"] = df["domain"].apply(typosquatting_score)
 
     print('✅ Features added:')
     print(df.head())

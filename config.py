@@ -5,6 +5,13 @@ from pydantic import Field, field_validator
 from typing import Union
 import os
 from jinja2 import Environment, FileSystemLoader
+from pathlib import Path
+
+
+# Use absolute or relative path from project root
+BASE_DIR = Path(__file__).resolve().parent  # adjust if needed
+
+
 
 
 # ✅ Set up Jinja2 template environment
@@ -24,6 +31,7 @@ class Settings(BaseSettings):
     REPORT_OUTPUT_DIR: str = Field(..., env="REPORT_OUTPUT_DIR")
     DEBUG: bool = Field(True, env="DEBUG")
     ENVIRONMENT: str = Field("development", env="ENVIRONMENT")
+    WHOIS_API_KEY: str = Field("", env="WHOIS_API_KEY")
 
     ALLOWED_ORIGINS: Union[List[str], str] = Field(["*"], env="ALLOWED_ORIGINS")
 

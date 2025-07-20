@@ -1,9 +1,10 @@
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from mangum import Mangum
-import os
+
 
 
 # os.add_dll_directory(r"C:\msys64\ucrt64\bin")
@@ -34,8 +35,20 @@ async def main_home():
     return {"message": "Welcome to our SMART Checker API"}
 
 
+
 # Include API routes
 app.include_router(checker_router.router, prefix="/api")
+
+
+@app.exception_handler(422)
+async def validation_exception_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": exc.errors(),
+            "body": await request.body(),
+        },
+    )
 
 
 handler = Mangum(app)
