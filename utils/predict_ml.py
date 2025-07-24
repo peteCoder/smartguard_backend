@@ -1,10 +1,13 @@
 import joblib
 import numpy as np
-from models.report_model import DomainPredictFeatures
 import pandas as pd
 
 from services.url_analysis import analyse_domain_for_ml
 from config import BASE_DIR
+
+from helpers import (
+    is_potentially_deceptive,
+)
 
 
 PHISHING_MODEL_PATH = BASE_DIR / "utils" / "phishing_model.pkl"
@@ -19,26 +22,6 @@ model = joblib.load(PHISHING_MODEL_PATH)
 label_encoder = joblib.load(LABEL_ENCODED_PATH)
 
 
-# Simple keyword pattern matcher
-def is_potentially_deceptive(domain: str):
-    suspicious_keywords = ["login", "verify", "secure", "account", "update", "auth"]
-    targets = [
-        "paypal", "venmo", "zelle", "cashapp", "stripe", "chime", "revolut", "monzo", "wise", "jpmorgan",
-        "citibank", "chase", "bankofamerica", "boa", "wellsfargo", "barclays", 
-        "hsbc", "capitalone", "fidelity", "robinhood", "amazon", "ebay", "aliexpress", 
-        "walmart", "flipkart", "shein", "etsy", "target", "bestbuy",
-        "google", "gmail", "outlook", "hotmail", "yahoo", "protonmail", "zoho", "office3653", "microsoft", "icloud",
-        "facebook", "fb", "instagram", "insta", "meta", "twitter", "x", "tiktok", "snapchat", "discord", "linkedin", 
-        "reddit", "whatsapp", "telegram",
-        "github", "gitlab", "bitbucket", "slack", "zoom", "dropbox", "figma", "notion", "asana", "jira", "confluence",
-        "steam", "epicgames", "roblox", "fortnite", "xbox", "playstation", "nintendo", "twitch",
-        "netflix", "hulu", "disney", "primevideo", "spotify", "verizon", "att", "tmobile", "comcast",
-        "1password", "lastpass", "authy", "okta", "duo", "norton", "mcafee"
-    ]
-
-    domain_lower = domain.lower()
-    return any(word in domain_lower for word in suspicious_keywords + targets)
-
 
 def machine_learning_prediction(domain: str):
     ML_FEATURES = [
@@ -50,6 +33,15 @@ def machine_learning_prediction(domain: str):
         "tld",
         "is_suspicious_tld",
         "typosquatting_score",
+
+        # Other Features
+        "is_shortened",
+        "is_brand_misused_with_tld",
+        "is_potentially_deceptive_flag",
+        
+        "typo_score",
+        "is_typosquatting"
+
     ]
 
     full_features = analyse_domain_for_ml(domain)

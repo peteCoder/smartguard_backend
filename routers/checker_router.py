@@ -8,7 +8,10 @@ from datetime import datetime, timezone
 import whois
 from utils.predict_ml import machine_learning_prediction
 
-from services.url_analysis import is_ip_address, is_shortened, typosquatting_score  # Import your helpers
+from services.url_analysis import is_shortened, typosquatting_score  # Import your helpers
+from helpers import (
+    is_ip_address
+)
 
 router = APIRouter()
 
