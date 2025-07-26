@@ -9,12 +9,12 @@ from pathlib import Path
 
 
 # Use absolute or relative path from project root
-BASE_DIR = Path(__file__).resolve().parent  # adjust if needed
+BASE_DIR = Path(__file__).resolve().parent
 
 
 
 
-# ✅ Set up Jinja2 template environment
+# Set up Jinja2 template environment
 templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 env = Environment(loader=FileSystemLoader(templates_dir))
 

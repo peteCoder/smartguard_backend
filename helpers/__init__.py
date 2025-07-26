@@ -13,9 +13,8 @@ from .constants import (
     BRAND_TARGETS,
     SHORTENERS,
     SUSPICIOUS_KEYWORDS,
-    SUSPICIOUS_TLDS
+    SUSPICIOUS_TLDS,
 )
-
 
 def improved_typosquatting_score(domain: str, threshold: float = 0.6) -> tuple[float, bool]:
     """

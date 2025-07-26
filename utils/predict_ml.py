@@ -9,13 +9,13 @@ from helpers import (
     is_potentially_deceptive,
 )
 
-
+# Retrieving the location of the model
 PHISHING_MODEL_PATH = BASE_DIR / "utils" / "phishing_model.pkl"
 LABEL_ENCODED_PATH = BASE_DIR / "utils" / "label_encoder.pkl"
 
-print("BASE_DIR: ", BASE_DIR)
-print("PHISHING_MODEL_PATH: ", PHISHING_MODEL_PATH)
-print("LABEL_ENCODED_PATH: ", LABEL_ENCODED_PATH)
+# print("BASE_DIR: ", BASE_DIR)
+# print("PHISHING_MODEL_PATH: ", PHISHING_MODEL_PATH)
+# print("LABEL_ENCODED_PATH: ", LABEL_ENCODED_PATH)
 
 # Load your trained model and label encoder
 model = joblib.load(PHISHING_MODEL_PATH)
