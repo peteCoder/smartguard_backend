@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent
 templates_dir = os.path.join(os.path.dirname(__file__), "templates")
 env = Environment(loader=FileSystemLoader(templates_dir))
 
-print("Template dir: ", templates_dir)
+# print("Template dir: ", templates_dir)
 
 class Settings(BaseSettings):
     # External API keys

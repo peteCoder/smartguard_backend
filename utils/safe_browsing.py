@@ -27,10 +27,10 @@ def check_url_safety_google(url: str):
         
         data = response.json()
 
-        print("DATA: ", data)
-        print(response.status_code)
+        # print("DATA: ", data)
+        # print(response.status_code)
 
-        print(data.get("matches"))
+        # print(data.get("matches"))
 
         if data.get("matches"):
             return {

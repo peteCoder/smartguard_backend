@@ -30,17 +30,17 @@ from helpers import (
 )
 
 def main():
-    print(f'Loading file: {INPUT_FILE}')
+    # print(f'Loading file: {INPUT_FILE}')
     if INPUT_FILE.endswith('.xlsx'):
         df = pd.read_excel(INPUT_FILE)
     else:
         df = pd.read_csv(INPUT_FILE)
 
-    print(f'Loaded {len(df)} rows.')
+    # print(f'Loaded {len(df)} rows.')
 
     # Ensure column is named 'domain'
     if 'domain' not in df.columns:
-        print(f'Could not find a "domain" column. Found: {df.columns.tolist()}')
+        # print(f'Could not find a "domain" column. Found: {df.columns.tolist()}')
         return
 
     df['domain'] = df['domain'].apply(normalize_domain)
@@ -70,17 +70,17 @@ def main():
     # Not Additional
     df["typosquatting_score"] = df["domain"].apply(typosquatting_score)
 
-    print('✅ Features added:')
-    print(df.head())
+    # print('✅ Features added:')
+    # print(df.head())
 
     # Save to CSV
     df.to_csv(OUTPUT_FILE, index=False)
-    print(f'📁 Saved to {OUTPUT_FILE}')
+    # print(f'📁 Saved to {OUTPUT_FILE}')
 
 
 if __name__ == '__main__':
     main()
 
-print("Working as expected!")
+# print("Working as expected!")
 
 

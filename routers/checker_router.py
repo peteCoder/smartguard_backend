@@ -71,7 +71,6 @@ def generate_pdf_report(data: report_model.PhishingPredictionResponse):
         "date": datetime.now().strftime("%Y-%m-%d %H:%M UTC")
     }
 
-    print("Print Context: ", context)
 
     template = env.get_template("report.html")
     rendered_html = template.render(**context)
