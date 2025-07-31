@@ -16,6 +16,7 @@ from .constants import (
     SUSPICIOUS_TLDS,
 )
 
+
 def improved_typosquatting_score(domain: str, threshold: float = 0.6) -> tuple[float, bool]:
     """
     Returns a similarity score between 0 and 1,
@@ -40,7 +41,7 @@ def typosquatting_score(domain: str) -> float:
     score = sum([1 for word in suspicious_keywords if word in domain.lower()])
     return round(min(score / len(suspicious_keywords), 1.0), 2)
 
-
+# facebook.net rather facebook.com
 def is_brand_misused_with_tld(domain: str) -> int:
     ext = tldextract.extract(domain)
     main_domain = ext.domain.lower()
@@ -50,7 +51,6 @@ def is_brand_misused_with_tld(domain: str) -> int:
         if brand in main_domain and tld not in trusted_tlds:
             return 1  # Suspicious
     return 0  # Not suspicious
-
 
 def get_whois_info(domain: str):
     try:
@@ -84,7 +84,6 @@ def get_whois_info(domain: str):
             "age_days": age_days,
             "error": None,
         }
-    
     except Exception as e:
         print(e)
         return {
@@ -103,12 +102,35 @@ def get_whois_info(domain: str):
 
 
 # Simple keyword pattern matcher
-def is_potentially_deceptive(domain: str):
-    suspicious_keywords = SUSPICIOUS_KEYWORDS
-    targets = BRAND_TARGETS
+# def is_potentially_deceptive(domain: str):
+#     suspicious_keywords = SUSPICIOUS_KEYWORDS
+#     targets = BRAND_TARGETS
 
-    domain_lower = domain.lower()
-    return any(word in domain_lower for word in suspicious_keywords + targets)
+#     domain_lower = domain.lower()
+#     return any(word in domain_lower for word in suspicious_keywords + targets)
+
+def is_potentially_deceptive(domain: str) -> bool:
+    suspicious_keywords = SUSPICIOUS_KEYWORDS
+    brand_targets = BRAND_TARGETS
+
+    ext = tldextract.extract(domain)
+    main_domain = ext.domain.lower()
+    full_domain = domain.lower()
+
+    # 1. If it's an exact match with a real brand domain, do not flag
+    if main_domain in brand_targets and ext.suffix in {"com", "net", "org"}:
+        return False  # It's probably a real brand
+
+    # 2. If the main domain contains a brand name or keyword + some other text, flag as deceptive
+    for brand in brand_targets:
+        if brand in main_domain and main_domain != brand:
+            return True
+
+    for keyword in suspicious_keywords:
+        if keyword in main_domain:
+            return True
+
+    return False
 
 
 def is_potentially_deceptive_flag(domain: str) -> int:

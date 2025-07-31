@@ -9,7 +9,7 @@ from mangum import Mangum
 
 # os.add_dll_directory(r"C:\msys64\ucrt64\bin")
 
-app = FastAPI()
+# app = FastAPI()
 
 from routers import checker_router
 

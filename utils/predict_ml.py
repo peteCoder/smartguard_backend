@@ -45,7 +45,6 @@ def machine_learning_prediction(domain: str):
     ]
 
     full_features = analyse_domain_for_ml(domain)
-    # print("Full Features: ", full_features)
 
     try:
         features_for_model = {k: full_features[k] for k in ML_FEATURES}

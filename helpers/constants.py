@@ -1,6 +1,6 @@
 # Optional suspicious TLD flag
 SUSPICIOUS_TLDS = {
-    "tk", "ml", "ga", "cf", "gq", # Freenom domains (very common in scams)
+    "tk", "ml", "ga", "cf", "gq", # Free domains (very common in scams)
     "xyz", "top", "buzz", "info", "win", # Cheap or spammy
     "club", "vip", "loan", "click", "work",
     "support", "review", "fit", "country", "space",
