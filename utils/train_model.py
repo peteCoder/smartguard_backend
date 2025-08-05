@@ -7,7 +7,8 @@ import joblib
 
 
 # Load your data
-df = pd.read_csv("DomainAccurateDataCSVTypeReal.csv")
+# df = pd.read_csv("DomainAccurateDataCSVTypeReal.csv")
+df = pd.read_csv("DomainAccurateDataCSVType.csv")
 # df = pd.read_csv("DomainAccurateDataCSVType.csv")
 # df = pd.read_csv("fileMain.csv")
 # df = pd.read_csv("DomainAccurateDataCSVType.csv")
@@ -40,5 +41,9 @@ print(classification_report(y_test, y_pred))
 
 joblib.dump(model, "phishing_model.pkl")
 joblib.dump(le, "label_encoder.pkl")
+
+
+
+
 
 

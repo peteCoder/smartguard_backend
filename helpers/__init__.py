@@ -16,6 +16,14 @@ from .constants import (
     SUSPICIOUS_TLDS,
 )
 
+from sklearn.preprocessing import LabelEncoder
+
+
+def safe_label_encode(label: str, encoder: LabelEncoder) -> int:
+    if label in encoder.classes_:
+        return int(encoder.transform([label])[0])
+    else:
+        return -1  # Or some other default value
 
 def improved_typosquatting_score(domain: str, threshold: float = 0.6) -> tuple[float, bool]:
     """

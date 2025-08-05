@@ -1,16 +1,12 @@
-from config import settings
-from urllib.parse import urlparse
-import numpy as np
 import pandas as pd
 
-from datetime import datetime
 
 # -------------------------------
 # CONFIGURATION
 # -------------------------------
 
-INPUT_FILE = 'DataDomainCSVProto.csv'  # change to your file name
-OUTPUT_FILE = 'DomainAccurateDataCSVType.csv'
+INPUT_FILE = 'MajorCSVProto.csv'  # change to your file name
+OUTPUT_FILE = 'DomainAccurateDataCSVType.csv' # output where more columns are created
 
 
 from helpers import (
