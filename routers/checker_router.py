@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Query, Response
-from services import qr_extration, url_analysis
+from Backend.services import qr_extraction
+from services import url_analysis
 from models import report_model
 from typing import Union
 from config import env
@@ -28,13 +29,13 @@ async def api_home():
 
 @router.post("/scan-qr")
 async def scan_qr(file: UploadFile = File(...)):
-    result = await qr_extration.extract_qr_from_file(file)
+    result = await qr_extraction.extract_qr_from_file(file)
     return {"extracted_text": result}
 
 
 @router.post("/extract-qr")
 async def extract_qr(file: UploadFile = File(...)):
-    qr_text = qr_extration.extract_qr_code(file)
+    qr_text = qr_extraction.extract_qr_code(file)
     if qr_text:
         analysis_result = analyze_url(qr_text)
         return analysis_result
