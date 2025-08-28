@@ -10,8 +10,8 @@ from helpers import (
 )
 
 # Load trained model and label encoder
-PHISHING_MODEL_PATH = BASE_DIR / "utils" / "phishing_model.pkl"
-LABEL_ENCODER_PATH = BASE_DIR / "utils" / "label_encoder.pkl"
+PHISHING_MODEL_PATH = BASE_DIR / "scripts" / "phishing_model.pkl"
+LABEL_ENCODER_PATH = BASE_DIR / "scripts" / "label_encoder.pkl"
 
 model = joblib.load(PHISHING_MODEL_PATH)
 label_encoder = joblib.load(LABEL_ENCODER_PATH)
@@ -26,7 +26,6 @@ def machine_learning_prediction(domain: str):
         "num_subdomains",
         "tld",
         "is_suspicious_tld",
-        "typosquatting_score",
         "is_shortened",
         "is_brand_misused_with_tld",
         "is_potentially_deceptive_flag",

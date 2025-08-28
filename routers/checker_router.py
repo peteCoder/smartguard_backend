@@ -1,15 +1,12 @@
 from fastapi import APIRouter, UploadFile, File, Query, Response
-from Backend.services import qr_extraction
-from services import url_analysis
+from services import qr_extration, url_analysis
 from models import report_model
-from typing import Union
 from config import env
 from weasyprint import HTML
-from datetime import datetime, timezone
-import whois
+from datetime import datetime
 from utils.predict_ml import machine_learning_prediction
 
-from services.url_analysis import is_shortened, typosquatting_score  # Import your helpers
+from services.url_analysis import is_shortened
 from helpers import (
     is_ip_address
 )
@@ -29,7 +26,7 @@ async def api_home():
 
 @router.post("/scan-qr")
 async def scan_qr(file: UploadFile = File(...)):
-    result = await qr_extraction.extract_qr_from_file(file)
+    result = await qr_extration.extract_qr_from_file(file)
     return {"extracted_text": result}
 
 
@@ -60,7 +57,6 @@ def generate_pdf_report(data: report_model.PhishingPredictionResponse):
         "is_ip": is_ip_address(data.domain),
         "has_https": data.features_used.get("has_https", 0),
         "is_shortened": is_shortened(data.domain),
-        "typosquatting_score": data.features_used.get("typosquatting_score", 0),
         "domain_age_days": whois.get("age_days"),
         "safe": not data.is_phishing  # Invert to match "Safe: Yes/No"
     }

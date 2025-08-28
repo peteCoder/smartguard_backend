@@ -44,11 +44,6 @@ def improved_typosquatting_score(domain: str, threshold: float = 0.6) -> tuple[f
     return round(max_score, 2), max_score >= threshold
 
 
-def typosquatting_score(domain: str) -> float:
-    suspicious_keywords = SUSPICIOUS_KEYWORDS
-    score = sum([1 for word in suspicious_keywords if word in domain.lower()])
-    return round(min(score / len(suspicious_keywords), 1.0), 2)
-
 # facebook.net rather facebook.com
 def is_brand_misused_with_tld(domain: str) -> int:
     ext = tldextract.extract(domain)
@@ -109,14 +104,6 @@ def get_whois_info(domain: str):
         }
 
 
-# Simple keyword pattern matcher
-# def is_potentially_deceptive(domain: str):
-#     suspicious_keywords = SUSPICIOUS_KEYWORDS
-#     targets = BRAND_TARGETS
-
-#     domain_lower = domain.lower()
-#     return any(word in domain_lower for word in suspicious_keywords + targets)
-
 def is_potentially_deceptive(domain: str) -> bool:
     suspicious_keywords = SUSPICIOUS_KEYWORDS
     brand_targets = BRAND_TARGETS
@@ -164,6 +151,13 @@ def num_hyphens(domain):
 
 
 def has_https(domain):
+    """
+        Returns 1 if domain starts with https://  
+        although not a safety signal since many sites 
+        have https:// regardless if they are phishing or not
+        This is just to tell the users if his input contains 
+        https:// or is merely http://
+    """
     return 1 if domain.startswith('https://') else 0
 
 
@@ -181,14 +175,6 @@ def get_tld(domain):
 
 def is_suspicious_tld(tld):
     return 1 if tld in SUSPICIOUS_TLDS else 0
-
-
-# Generate age based on is_phishing label
-def generate_age(is_phishing):
-    if is_phishing == 1:
-        return np.random.randint(1, 180)  # phishing domains are often new
-    else:
-        return np.random.randint(1000, 5000)  # safe domains are older
 
 
 def is_ip_address(domain: str) -> bool:

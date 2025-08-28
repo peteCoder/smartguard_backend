@@ -1,15 +1,8 @@
-from typing import Union
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from mangum import Mangum
-
-
-
-# os.add_dll_directory(r"C:\msys64\ucrt64\bin")
-
-# app = FastAPI()
 
 from routers import checker_router
 
@@ -23,7 +16,6 @@ app = FastAPI(
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=settings.ALLOWED_ORIGINS if settings.ALLOWED_ORIGINS != ["*"] else ["*"],
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
