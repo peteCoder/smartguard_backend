@@ -7,13 +7,7 @@ import joblib
 
 
 # Load your data
-# df = pd.read_csv("DomainAccurateDataCSVTypeReal.csv")
 df = pd.read_csv("DomainAccurateDataCSVType.csv")
-# df = pd.read_csv("DomainAccurateDataCSVType.csv")
-# df = pd.read_csv("fileMain.csv")
-# df = pd.read_csv("DomainAccurateDataCSVType.csv")
-# df = pd.read_csv("CSVMainDomain.csv")
-
 
 # Drop 'domain' column and separate label
 X = df.drop(columns=["domain", "is_phishing"])
