@@ -2,7 +2,7 @@ from helpers import (
     get_tld, get_whois_info,
     normalize_domain, domain_length, num_digits,
     num_hyphens, num_subdomains, has_https,
-    is_suspicious_tld,typosquatting_score,
+    is_suspicious_tld,
     is_shortened,
     improved_typosquatting_score,
     is_potentially_deceptive_flag,
@@ -27,7 +27,6 @@ def analyse_domain_for_ml(domain: str):
         "num_subdomains": num_subdomains(domain),
         "tld": tld,
         "is_suspicious_tld": is_suspicious_tld(tld),
-        "typosquatting_score": typosquatting_score(domain),
         
         "domain_age_days": whois_info["age_days"] if whois_info["age_days"] is not None else 0,
         "whois": whois_info,

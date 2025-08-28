@@ -7,18 +7,6 @@ from fastapi import UploadFile
 import cv2
 import numpy as np
 
-
-async def extract_qr_from_file(file: UploadFile):
-    image_data = await file.read()
-    image = Image.open(io.BytesIO(image_data))
-    decoded_objects = decode(image)
-
-    # print(decoded_objects)
-
-    if decoded_objects:
-        return decoded_objects[0].data.decode("utf-8")
-    return "No QR code found"
-
 def extract_qr_code(file: UploadFile) -> Optional[str]:
     try:
         # Read the file as bytes

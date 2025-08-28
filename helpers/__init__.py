@@ -44,10 +44,10 @@ def improved_typosquatting_score(domain: str, threshold: float = 0.6) -> tuple[f
     return round(max_score, 2), max_score >= threshold
 
 
-def typosquatting_score(domain: str) -> float:
-    suspicious_keywords = SUSPICIOUS_KEYWORDS
-    score = sum([1 for word in suspicious_keywords if word in domain.lower()])
-    return round(min(score / len(suspicious_keywords), 1.0), 2)
+# def typosquatting_score(domain: str) -> float:
+#     suspicious_keywords = SUSPICIOUS_KEYWORDS
+#     score = sum([1 for word in suspicious_keywords if word in domain.lower()])
+#     return round(min(score / len(suspicious_keywords), 1.0), 2)
 
 # facebook.net rather facebook.com
 def is_brand_misused_with_tld(domain: str) -> int:
@@ -108,14 +108,6 @@ def get_whois_info(domain: str):
             "error": str(e),
         }
 
-
-# Simple keyword pattern matcher
-# def is_potentially_deceptive(domain: str):
-#     suspicious_keywords = SUSPICIOUS_KEYWORDS
-#     targets = BRAND_TARGETS
-
-#     domain_lower = domain.lower()
-#     return any(word in domain_lower for word in suspicious_keywords + targets)
 
 def is_potentially_deceptive(domain: str) -> bool:
     suspicious_keywords = SUSPICIOUS_KEYWORDS

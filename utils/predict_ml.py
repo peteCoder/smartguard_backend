@@ -26,7 +26,6 @@ def machine_learning_prediction(domain: str):
         "num_subdomains",
         "tld",
         "is_suspicious_tld",
-        "typosquatting_score",
         "is_shortened",
         "is_brand_misused_with_tld",
         "is_potentially_deceptive_flag",
